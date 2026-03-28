@@ -59,6 +59,7 @@ function UsuariosContent() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    password: '',
     type: 'administrador' as 'administrador' | 'visitante',
   })
 
@@ -76,6 +77,7 @@ function UsuariosContent() {
       setFormData({
         name: user.name,
         email: user.email,
+        password: '',
         type: user.type,
       })
     } else {
@@ -83,6 +85,7 @@ function UsuariosContent() {
       setFormData({
         name: '',
         email: '',
+        password: '',
         type: 'administrador',
       })
     }
@@ -298,6 +301,18 @@ function UsuariosContent() {
                     setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder="Digite o email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  placeholder="Digite a senha"
                 />
               </div>
               <div className="space-y-2">
