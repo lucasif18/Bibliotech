@@ -101,66 +101,46 @@ public class LoanFacade {
      * @param loanId ID do empréstimo a ser devolvido
      * @return DTO do empréstimo finalizado
      */
-    /*
-     * @Transactional
-     * public LoanDTO returnLoan(Long loanId) {
-     * log.debug("Facade: iniciando devolução — loanId={}", loanId);
-     * 
-     * Loan loan = loanService.findEntityById(loanId);
-     * 
-     * // PADRÃO STATE — verifica permissão de devolução no estado atual
-     * LoanState state = LoanStateFactory.from(loan.getStatus());
-     * if (!state.canReturn()) {
-     * throw new BusinessException(
-     * "Empréstimo já está no estado '%s' e não pode ser devolvido.".formatted(state
-     * .getStateName()));
-     * }
-     * 
-     * // Gera notificação de atraso se necessário (State decide)
-     * if (state.requiresOverdueNotification()) {
-     * notificationService.createInternal(
-     * "Devolução em Atraso",
-     * "O livro \"" + loan.getBook().getTitle() + "\" foi devolvido com atraso por "
-     * + loan.getUser().getName() + ".",
-     * Notification.NotificationType.WARNING
-     * );
-     * }
-     * 
-     * // Finalizar empréstimo
-     * LoanDTO returned = loanService.returnLoan(loanId);
-     * 
-     * // Devolver exemplar ao estoque
-     * bookService.incrementAvailable(loan.getBook().getId());
-     * 
-     * // Notificar reservas pendentes (se houver)
-     * reservationService.notifyAvailability(loan.getBook().getId());
-     * 
-     * // Notificação de confirmação
-     * notificationService.createInternal(
-     * "Devolução Registrada",
-     * "O livro \"" + loan.getBook().getTitle() + "\" foi devolvido por " +
-     * loan.getUser().getName() + ".",
-     * Notification.NotificationType.INFO
-     * );
-     * 
-     * log.info("Facade: devolução concluída — loanId={}", loanId);
-     * return returned;
-     * }
-     */
+    
 
-    @Transactional
-    public LoanDTO returnLoan(Long loanId) {
-        Loan loan = loanService.findEntityById(loanId);
+   @Transactional
+public LoanDTO returnLoan(Long loanId) {
 
-        // 1. Finaliza o empréstimo (muda status para FINALIZADO)
-        LoanDTO returned = loanService.returnLoan(loanId);
+    Loan loan = loanService.findEntityById(loanId);
 
-        // 2. Devolve o exemplar ao stock
-        bookService.incrementAvailable(loan.getBook().getId());
+    // 1. Finaliza empréstimo atual
+    loanService.returnLoan(loanId);
 
-        // 3. Verifica se alguém estava na fila (Automação que criámos)
-        reservationService.notifyAvailability(loan.getBook().getId());
+    // 2. Devolve ao estoque
+    bookService.incrementAvailable(loan.getBook().getId());
 
-        return returned;
+    // 3. 🔥 Pega próximo da fila
+    Reservation next = reservationService.getNextInQueue(loan.getBook().getId());
+
+    if (next != null) {
+
+        // 4. 🔥 Cria novo empréstimo automático
+        Loan newLoan = Loan.builder()
+            .user(next.getUser())
+            .book(next.getBook())
+            .loanDate(LocalDate.now())
+            .returnDate(LocalDate.now().plusDays(7)) // ou regra sua
+            .status(Loan.LoanStatus.ATIVO)
+            .build();
+
+        loanService.createRaw(newLoan);
+
+        // 5. Remove da fila
+        reservationService.markAsCompleted(next);
+
+        // 6. Notifica
+        notificationService.createInternal(
+            "Empréstimo Automático",
+            "O livro \"" + next.getBook().getTitle() + "\" foi automaticamente emprestado para você.",
+            Notification.NotificationType.SUCCESS
+        );
     }
+
+    return LoanDTO.fromEntity(loan);
+}
 }

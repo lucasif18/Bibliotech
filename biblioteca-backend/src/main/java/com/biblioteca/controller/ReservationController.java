@@ -55,18 +55,12 @@ public class ReservationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    /*
-     * @PostMapping("/{id}/cancelar")
-     * public ResponseEntity<ReservationDTO> cancel(@PathVariable Long id) {
-     * return ResponseEntity.ok(reservationService.cancel(id));
-     * }
-     */
-
+    
     @PostMapping("/{id}/cancelar")
-    public ResponseEntity<Void> cancel(@PathVariable Long id) {
-        reservationService.cancel(id);
-        return ResponseEntity.noContent().build();
+      public ResponseEntity<ReservationDTO> cancel(@PathVariable Long id) {
+      return ResponseEntity.ok(reservationService.cancel(id));
     }
+     
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

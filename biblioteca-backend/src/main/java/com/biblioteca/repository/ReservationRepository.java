@@ -17,6 +17,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByStatus(Reservation.ReservationStatus status);
 
+    List<Reservation> findByBookIdAndStatusOrderByReservationDateAsc(Long bookId, Reservation.ReservationStatus status);
+
+    
+
     @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
            "WHERE r.user.id = :userId AND r.book.id = :bookId AND r.status = 'PENDENTE'")
     boolean existsActivereservation(@Param("userId") Long userId, @Param("bookId") Long bookId);

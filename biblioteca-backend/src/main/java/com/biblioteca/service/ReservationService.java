@@ -4,6 +4,7 @@ import com.biblioteca.dto.ReservationDTO;
 import com.biblioteca.exception.BusinessException;
 import com.biblioteca.exception.ResourceNotFoundException;
 import com.biblioteca.model.*;
+import com.biblioteca.model.Reservation.ReservationStatus;
 import com.biblioteca.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +78,7 @@ public class ReservationService {
         Reservation reservation = Reservation.builder()
                 .user(user)
                 .book(book)
+                .reservationDate(java.time.LocalDate.now()) // 🔥 AQUI
                 .status(Reservation.ReservationStatus.PENDENTE)
                 .build();
 
@@ -86,15 +88,14 @@ public class ReservationService {
         notificationService.createInternal(
                 "Reserva Confirmada",
                 "Sua reserva para o livro \"" + book.getTitle() + "\" foi confirmada.",
-                Notification.NotificationType.SUCCESS
-        );
+                Notification.NotificationType.SUCCESS);
 
         return ReservationDTO.fromEntity(saved);
     }
 
     // ─── Cancelamento ────────────────────────────────────────────────────────────
 
-    /*@Transactional
+    @Transactional
     public ReservationDTO cancel(Long id) {
         Reservation reservation = findEntityById(id);
 
@@ -109,60 +110,7 @@ public class ReservationService {
         Reservation saved = reservationRepository.save(reservation);
         log.info("Reserva cancelada: id={}", id);
         return ReservationDTO.fromEntity(saved);
-    }*/
-
-    /**
-     * Marca a reserva como DISPONIVEL quando o livro for devolvido.
-     * Chamado internamente pelo {@link com.biblioteca.facade.LoanFacade}.
-     */
-    /*@Transactional
-    public void notifyAvailability(Long bookId) {
-        List<Reservation> pending = reservationRepository
-                .findByBookId(bookId)
-                .stream()
-                .filter(r -> r.getStatus() == Reservation.ReservationStatus.PENDENTE)
-                .toList();
-
-        pending.forEach(r -> {
-            r.setStatus(Reservation.ReservationStatus.DISPONIVEL);
-            reservationRepository.save(r);
-            notificationService.createInternal(
-                    "Livro Disponível",
-                    "O livro \"" + r.getBook().getTitle() + "\" que você reservou está disponível.",
-                    Notification.NotificationType.SUCCESS
-            );
-            log.info("Reserva id={} marcada como DISPONIVEL.", r.getId());
-        });
-    }*/
-
-    @Transactional
-    public void notifyAvailability(Long bookId) {
-        // Busca a reserva mais antiga (primeiro da fila) que está PENDENTE
-        List<Reservation> pending = reservationRepository.findByBookId(bookId)
-            .stream()
-            .filter(r -> r.getStatus() == Reservation.ReservationStatus.PENDENTE)
-            .toList();
-
-    if (!pending.isEmpty()) {
-        Reservation nextInLine = pending.get(0); 
-        
-        // O livro fica "reservado" especificamente para esta pessoa
-        nextInLine.setStatus(Reservation.ReservationStatus.DISPONIVEL);
-        reservationRepository.save(nextInLine);
-
-        notificationService.createInternal(
-                "Livro Disponível",
-                "O livro \"" + nextInLine.getBook().getTitle() + "\" está pronto para si!",
-                Notification.NotificationType.SUCCESS
-         );
-        }
     }
-
-
-@Transactional
-public void cancel(Long id) {
-    reservationRepository.deleteById(id);
-}
 
     @Transactional
     public void delete(Long id) {
@@ -189,4 +137,39 @@ public void cancel(Long id) {
                     "Status inválido: '%s'. Use: pendente, disponivel ou cancelada.".formatted(status));
         }
     }
+
+    @Transactional
+    public void processQueue(Long bookId) {
+        List<Reservation> list = reservationRepository
+                .findByBookIdAndStatusOrderByReservationDateAsc(bookId, ReservationStatus.PENDENTE);
+
+        if (!list.isEmpty()) {
+            Reservation next = list.get(0);
+
+            next.setStatus(ReservationStatus.DISPONIVEL);
+            reservationRepository.save(next);
+
+            notificationService.createInternal(
+                    "Livro Disponível",
+                    "O livro \"" + next.getBook().getTitle() + "\" está disponível para você.",
+                    Notification.NotificationType.SUCCESS);
+        }
+    }
+
+    @Transactional
+    public Reservation getNextInQueue(Long bookId) {
+        List<Reservation> list = reservationRepository
+                .findByBookIdAndStatusOrderByReservationDateAsc(
+                        bookId, ReservationStatus.PENDENTE);
+        if (list.isEmpty())
+            return null;
+        return list.get(0);
+    }
+
+    @Transactional
+    public void markAsCompleted(Reservation reservation) {
+        reservation.setStatus(ReservationStatus.CANCELADA); // ou CRIAR um status "ATENDIDA"
+        reservationRepository.save(reservation);
+    }
+
 }

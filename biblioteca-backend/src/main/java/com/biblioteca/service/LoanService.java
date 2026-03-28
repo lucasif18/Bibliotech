@@ -101,23 +101,6 @@ public class LoanService {
         return saved;
     }
 
-    /*@Transactional
-    public LoanDTO returnLoan(Long loanId) {
-        Loan loan = findEntityById(loanId);
-
-        // PADRÃO STATE — delega a verificação ao estado atual
-        LoanState state = LoanStateFactory.from(loan.getStatus());
-        if (!state.canReturn()) {
-            throw new BusinessException(
-                    "Empréstimo no estado '%s' não pode ser devolvido.".formatted(state.getStateName()));
-        }
-
-        loan.setStatus(Loan.LoanStatus.FINALIZADO);
-        Loan saved = loanRepository.save(loan);
-        log.info("Devolução registrada: loanId={}", loanId);
-        return LoanDTO.fromEntity(saved);
-    }*/
-
     @Transactional
     public LoanDTO returnLoan(Long loanId) {
     Loan loan = findEntityById(loanId);
