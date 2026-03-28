@@ -93,14 +93,6 @@ public class LoanService {
 
     // ─── Operações principais (chamadas pelo Facade) ──────────────────────────────
 
-    /*@Transactional
-    public Loan createRaw(Loan loan) {
-        Loan saved = loanRepository.save(loan);
-        log.info("Empréstimo criado: id={}, usuário={}, livro={}",
-                saved.getId(), saved.getUser().getName(), saved.getBook().getTitle());
-        return saved;
-    }*/
-
     @Transactional
     public Loan createRaw(Loan loan) {
         // CORREÇÃO: Impede datas retroativas
@@ -114,33 +106,7 @@ public class LoanService {
         return saved;
     }
 
-    /*@Transactional
-    public LoanDTO returnLoan(Long loanId) {
-<<<<<<< Updated upstream
-    Loan loan = findEntityById(loanId);
     
-     // Define o status como FINALIZADO para o State reconhecer
-     loan.setStatus(Loan.LoanStatus.FINALIZADO);
-     Loan saved = loanRepository.save(loan);
-    
-     log.info("Status do empréstimo {} alterado para FINALIZADO no banco", loanId);
-     return LoanDTO.fromEntity(saved);
-=======
-        Loan loan = findEntityById(loanId);
-
-        // PADRÃO STATE — delega a verificação ao estado atual
-        LoanState state = LoanStateFactory.from(loan.getStatus());
-        if (!state.canReturn()) {
-            throw new BusinessException(
-                    "Empréstimo no estado '%s' não pode ser devolvido.".formatted(state.getStateName()));
-        }
-
-        loan.setStatus(Loan.LoanStatus.FINALIZADO);
-        Loan saved = loanRepository.save(loan);
-        log.info("Devolução registrada: loanId={}", loanId);
-        return LoanDTO.fromEntity(saved);
-    }*/
-
     @Transactional
     public LoanDTO returnLoan(Long loanId) {
         Loan loan = findEntityById(loanId);
@@ -162,7 +128,6 @@ public class LoanService {
         Loan saved = loanRepository.save(loan);
         log.info("Devolução registrada e estoque atualizado: loanId={}", loanId);
         return LoanDTO.fromEntity(saved);
->>>>>>> Stashed changes
     }
 
     @Transactional
