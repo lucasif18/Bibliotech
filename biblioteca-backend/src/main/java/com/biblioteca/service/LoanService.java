@@ -31,35 +31,40 @@ public class LoanService {
 
     // ─── Consultas ───────────────────────────────────────────────────────────────
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LoanDTO> findAll() {
+        refreshOverdueStatus();
         return loanRepository.findAll().stream()
                 .map(LoanDTO::fromEntity)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LoanDTO findById(Long id) {
+        refreshOverdueStatus();
         return LoanDTO.fromEntity(findEntityById(id));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LoanDTO> findByUserId(Long userId) {
+        refreshOverdueStatus();
         return loanRepository.findByUserId(userId).stream()
                 .map(LoanDTO::fromEntity)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LoanDTO> findByStatus(String status) {
+        refreshOverdueStatus();
         Loan.LoanStatus loanStatus = parseStatus(status);
         return loanRepository.findByStatus(loanStatus).stream()
                 .map(LoanDTO::fromEntity)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LoanDTO> search(String query) {
+        refreshOverdueStatus();
         return loanRepository.searchByUserNameOrBookTitle(query).stream()
                 .map(LoanDTO::fromEntity)
                 .toList();

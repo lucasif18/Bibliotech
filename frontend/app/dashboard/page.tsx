@@ -18,7 +18,7 @@ function DashboardContent() {
     totalTitles: 0,
     borrowedBooks: 0,
     totalUsers: 0,
-    activeLoans: loans?.filter((l) => l.status === 'ativo').length || 0,
+    activeLoans: loans?.filter((l) => l.status === 'ativo' || l.status === 'atrasado').length || 0,
     overdueLoans: loans?.filter((l) => l.status === 'atrasado').length || 0,
     unavailableBooks: books?.filter((b) => b.available === 0).length || 0,
   }

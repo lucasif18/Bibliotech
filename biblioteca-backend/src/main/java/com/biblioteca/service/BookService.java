@@ -4,6 +4,7 @@ import com.biblioteca.dto.BookDTO;
 import com.biblioteca.exception.BusinessException;
 import com.biblioteca.exception.ResourceNotFoundException;
 import com.biblioteca.iterator.BookIterator;
+import com.biblioteca.model.ActivityLog;
 import com.biblioteca.model.Book;
 import com.biblioteca.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private final ActivityLogService activityLogService;
 
     // ─── Consultas ───────────────────────────────────────────────────────────────
 
@@ -85,6 +87,10 @@ public class BookService {
                 .build();
 
         Book saved = bookRepository.save(book);
+        activityLogService.log(
+            ActivityLog.ActivityType.CADASTRO_LIVRO,
+            "Novo livro adicionado: '%s' (%s).".formatted(saved.getTitle(), saved.getIsbn())
+        );
         log.info("Livro criado: id={}, isbn={}", saved.getId(), saved.getIsbn());
         return BookDTO.fromEntity(saved);
     }

@@ -21,6 +21,7 @@ public class ReservationService {
     private final UserService userService;
     private final BookService bookService;
     private final NotificationService notificationService;
+    private final ActivityLogService activityLogService;
 
     // ─── Consultas ───────────────────────────────────────────────────────────────
 
@@ -55,11 +56,16 @@ public class ReservationService {
 
     @Transactional
     public ReservationDTO create(ReservationDTO dto) {
+        return create(dto, false);
+    }
+
+    @Transactional
+    public ReservationDTO create(ReservationDTO dto, boolean createdByAdmin) {
         User user = userService.findEntityById(dto.getUserId());
         Book book = bookService.findEntityById(dto.getBookId());
 
-        // Visitantes não podem fazer reservas
-        if (user.getType() == User.UserType.VISITANTE) {
+        // Visitantes só podem ter reserva criada por administrador autenticado.
+        if (user.getType() == User.UserType.VISITANTE && !createdByAdmin) {
             throw new BusinessException("Visitantes não podem realizar reservas.");
         }
 
@@ -81,6 +87,10 @@ public class ReservationService {
                 .build();
 
         Reservation saved = reservationRepository.save(reservation);
+        activityLogService.log(
+            ActivityLog.ActivityType.RESERVA,
+            "Nova reserva criada: livro '%s' para %s.".formatted(book.getTitle(), user.getName())
+        );
         log.info("Reserva criada: id={}, usuário={}, livro={}", saved.getId(), user.getName(), book.getTitle());
 
         notificationService.createInternal(

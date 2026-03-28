@@ -28,9 +28,12 @@ public class DashboardService {
     private final UserRepository     userRepository;
     private final LoanRepository     loanRepository;
     private final ActivityLogService activityLogService;
+        private final LoanService        loanService;
 
-    @Transactional(readOnly = true)
+        @Transactional
     public DashboardResponseDTO buildDashboard() {
+
+                loanService.refreshOverdueStatus();
 
         List<Book> allBooks = bookRepository.findAll();
         List<Loan> allLoans = loanRepository.findAll();
@@ -43,7 +46,8 @@ public class DashboardService {
                                      .sum();
         int totalUsers         = (int) userRepository.count();
         int activeLoans        = (int) allLoans.stream()
-                                     .filter(l -> l.getStatus() == Loan.LoanStatus.ATIVO)
+                                     .filter(l -> l.getStatus() == Loan.LoanStatus.ATIVO
+                                               || l.getStatus() == Loan.LoanStatus.ATRASADO)
                                      .count();
         int overdueLoans       = (int) allLoans.stream()
                                      .filter(l -> l.getStatus() == Loan.LoanStatus.ATRASADO)

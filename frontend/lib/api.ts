@@ -336,7 +336,7 @@ export const reservationService = {
    */
   async cancel(id: string): Promise<Reservation> {
     return fetchApi<Reservation>(`/reservas/${id}/cancelar`, {
-      method: 'PATCH',
+      method: 'POST',
     })
   },
 
@@ -367,23 +367,23 @@ export const notificationService = {
    * Busca notificações não lidas
    */
   async getUnread(): Promise<Notification[]> {
-    return fetchApi<Notification[]>('/notificacoes?read=false')
+    return fetchApi<Notification[]>('/notificacoes/nao-lidas')
   },
 
   /**
    * Conta notificações não lidas
    */
   async countUnread(): Promise<number> {
-    const data = await fetchApi<{ count: number }>('/notificacoes/count-unread')
-    return data.count
+    const data = await fetchApi<{ naoLidas: number }>('/notificacoes/contagem')
+    return data.naoLidas
   },
 
   /**
    * Marca uma notificação como lida
    */
   async markAsRead(id: string): Promise<Notification> {
-    return fetchApi<Notification>(`/notificacoes/${id}/read`, {
-      method: 'PATCH',
+    return fetchApi<Notification>(`/notificacoes/${id}/lida`, {
+      method: 'PUT',
     })
   },
 
@@ -391,8 +391,8 @@ export const notificationService = {
    * Marca todas as notificações como lidas
    */
   async markAllAsRead(): Promise<void> {
-    return fetchApi<void>('/notificacoes/read-all', {
-      method: 'PATCH',
+    return fetchApi<void>('/notificacoes/marcar-todas', {
+      method: 'PUT',
     })
   },
 
@@ -408,7 +408,7 @@ export const notificationService = {
 
 /**
  * ============================================
- * ATIVIDADES - Endpoints /atividades
+ * ATIVIDADES - Endpoints /dashboard/activities
  * ============================================
  */
 export const activityService = {
@@ -416,7 +416,8 @@ export const activityService = {
    * Lista atividades recentes
    */
   async getRecent(limit: number = 10): Promise<Activity[]> {
-    return fetchApi<Activity[]>(`/atividades?limit=${limit}`)
+    const activities = await fetchApi<Activity[]>('/dashboard/activities')
+    return activities.slice(0, limit)
   },
 }
 

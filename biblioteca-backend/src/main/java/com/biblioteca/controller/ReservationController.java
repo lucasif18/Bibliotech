@@ -1,13 +1,19 @@
 package com.biblioteca.controller;
 
 import com.biblioteca.dto.ReservationDTO;
+import com.biblioteca.model.User;
+import com.biblioteca.security.AuthorizationService;
 import com.biblioteca.service.ReservationService;
+import com.biblioteca.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller REST para gerenciamento de Reservas.
@@ -27,6 +33,8 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final UserService userService;
+    private final AuthorizationService authService;
 
     @GetMapping
     public ResponseEntity<List<ReservationDTO>> findAll() {
@@ -49,8 +57,11 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationDTO> create(@Valid @RequestBody ReservationDTO dto) {
-        ReservationDTO created = reservationService.create(dto);
+    public ResponseEntity<ReservationDTO> create(@Valid @RequestBody ReservationDTO dto,
+                                                  @RequestHeader(value = HttpHeaders.AUTHORIZATION, required = false) String authorization) {
+        User requester = extractUserFromHeader(authorization);
+        boolean createdByAdmin = authService.isAdmin(requester);
+        ReservationDTO created = reservationService.create(dto, createdByAdmin);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -63,5 +74,34 @@ public class ReservationController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         reservationService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private User extractUserFromHeader(String authorization) {
+        Optional<Long> userId = getUserIdFromBearerToken(authorization);
+        if (userId.isEmpty()) {
+            return null;
+        }
+        try {
+            return userService.findEntityById(userId.get());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private Optional<Long> getUserIdFromBearerToken(String authorization) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return Optional.empty();
+        }
+
+        String token = authorization.substring(7);
+        try {
+            String decoded = new String(Base64.getDecoder().decode(token), StandardCharsets.UTF_8);
+            if (!decoded.startsWith("user:")) {
+                return Optional.empty();
+            }
+            return Optional.of(Long.parseLong(decoded.substring(5)));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

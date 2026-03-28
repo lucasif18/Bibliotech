@@ -44,6 +44,7 @@ public class LoanFacade {
     private final UserService userService;
     private final NotificationService notificationService;
     private final ReservationService reservationService;
+    private final ActivityLogService activityLogService;
 
     /**
      * Orquestra todo o fluxo de criação de um empréstimo.
@@ -92,6 +93,11 @@ public class LoanFacade {
                 Notification.NotificationType.SUCCESS
         );
 
+        activityLogService.log(
+            ActivityLog.ActivityType.EMPRESTIMO,
+            "Empréstimo realizado: livro '%s' para %s.".formatted(book.getTitle(), user.getName())
+        );
+
         log.info("Facade: empréstimo criado com sucesso — loanId={}", saved.getId());
         return LoanDTO.fromEntity(saved);
     }
@@ -138,6 +144,14 @@ public class LoanFacade {
                 "Devolução Registrada",
                 "O livro \"" + loan.getBook().getTitle() + "\" foi devolvido por " + loan.getUser().getName() + ".",
                 Notification.NotificationType.INFO
+        );
+
+        activityLogService.log(
+            ActivityLog.ActivityType.DEVOLUCAO,
+            "Empréstimo concluído: devolução do livro '%s' por %s.".formatted(
+                loan.getBook().getTitle(),
+                loan.getUser().getName()
+            )
         );
 
         log.info("Facade: devolução concluída — loanId={}", loanId);

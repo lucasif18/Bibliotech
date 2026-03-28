@@ -4,6 +4,7 @@ import com.biblioteca.dto.UserDTO;
 import com.biblioteca.exception.BusinessException;
 import com.biblioteca.exception.ResourceNotFoundException;
 import com.biblioteca.factory.UserFactory;
+import com.biblioteca.model.ActivityLog;
 import com.biblioteca.model.User;
 import com.biblioteca.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserFactory userFactory;   // PADRÃO FACTORY METHOD
     private final PasswordEncoder passwordEncoder;
+    private final ActivityLogService activityLogService;
 
     // ─── Consultas ───────────────────────────────────────────────────────────────
 
@@ -74,6 +76,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         User saved = userRepository.save(user);
+        activityLogService.log(
+            ActivityLog.ActivityType.CADASTRO_USUARIO,
+            "Novo usuário adicionado: %s (%s).".formatted(saved.getName(), saved.getType().name().toLowerCase())
+        );
         log.info("Usuário criado via Factory: id={}, tipo={}", saved.getId(), saved.getType());
         return UserDTO.fromEntity(saved);
     }
