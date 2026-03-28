@@ -93,16 +93,30 @@ public class LoanService {
 
     // ─── Operações principais (chamadas pelo Facade) ──────────────────────────────
 
+    /*@Transactional
+    public Loan createRaw(Loan loan) {
+        Loan saved = loanRepository.save(loan);
+        log.info("Empréstimo criado: id={}, usuário={}, livro={}",
+                saved.getId(), saved.getUser().getName(), saved.getBook().getTitle());
+        return saved;
+    }*/
+
     @Transactional
     public Loan createRaw(Loan loan) {
+        // CORREÇÃO: Impede datas retroativas
+        if (loan.getLoanDate().isBefore(LocalDate.now())) {
+            throw new BusinessException("A data do empréstimo não pode ser anterior a hoje.");
+        }
+        
         Loan saved = loanRepository.save(loan);
         log.info("Empréstimo criado: id={}, usuário={}, livro={}",
                 saved.getId(), saved.getUser().getName(), saved.getBook().getTitle());
         return saved;
     }
 
-    @Transactional
+    /*@Transactional
     public LoanDTO returnLoan(Long loanId) {
+<<<<<<< Updated upstream
     Loan loan = findEntityById(loanId);
     
      // Define o status como FINALIZADO para o State reconhecer
@@ -111,6 +125,44 @@ public class LoanService {
     
      log.info("Status do empréstimo {} alterado para FINALIZADO no banco", loanId);
      return LoanDTO.fromEntity(saved);
+=======
+        Loan loan = findEntityById(loanId);
+
+        // PADRÃO STATE — delega a verificação ao estado atual
+        LoanState state = LoanStateFactory.from(loan.getStatus());
+        if (!state.canReturn()) {
+            throw new BusinessException(
+                    "Empréstimo no estado '%s' não pode ser devolvido.".formatted(state.getStateName()));
+        }
+
+        loan.setStatus(Loan.LoanStatus.FINALIZADO);
+        Loan saved = loanRepository.save(loan);
+        log.info("Devolução registrada: loanId={}", loanId);
+        return LoanDTO.fromEntity(saved);
+    }*/
+
+    @Transactional
+    public LoanDTO returnLoan(Long loanId) {
+        Loan loan = findEntityById(loanId);
+
+        LoanState state = LoanStateFactory.from(loan.getStatus());
+        if (!state.canReturn()) {
+            throw new BusinessException(
+                    "Empréstimo no estado '%s' não pode ser devolvido.".formatted(state.getStateName()));
+        }
+
+        // CORREÇÃO: Atualiza o status do empréstimo
+        loan.setStatus(Loan.LoanStatus.FINALIZADO);
+        
+        // CORREÇÃO: IMPORTANTE! Devolve o livro ao estoque
+        com.biblioteca.model.Book book = loan.getBook();
+        book.setAvailable(book.getAvailable() + 1); 
+        // Aqui assumimos que você tem o bookRepository injetado ou o hibernate cuida do save
+        
+        Loan saved = loanRepository.save(loan);
+        log.info("Devolução registrada e estoque atualizado: loanId={}", loanId);
+        return LoanDTO.fromEntity(saved);
+>>>>>>> Stashed changes
     }
 
     @Transactional

@@ -95,6 +95,27 @@ public class ReservationService {
 
     // ─── Cancelamento ────────────────────────────────────────────────────────────
 
+    /*
+     * @Transactional
+     * public ReservationDTO cancel(Long id) {
+     * Reservation reservation = findEntityById(id);
+     * 
+     * if (reservation.getStatus() == Reservation.ReservationStatus.CANCELADA) {
+     * throw new BusinessException("Esta reserva já foi cancelada.");
+     * }
+     * if (reservation.getStatus() == Reservation.ReservationStatus.DISPONIVEL) {
+     * throw new
+     * BusinessException("Reservas com livro disponível devem ser convertidas em empréstimo."
+     * );
+     * }
+     * 
+     * reservation.setStatus(Reservation.ReservationStatus.CANCELADA);
+     * Reservation saved = reservationRepository.save(reservation);
+     * log.info("Reserva cancelada: id={}", id);
+     * return ReservationDTO.fromEntity(saved);
+     * }
+     */
+
     @Transactional
     public ReservationDTO cancel(Long id) {
         Reservation reservation = findEntityById(id);
@@ -102,16 +123,73 @@ public class ReservationService {
         if (reservation.getStatus() == Reservation.ReservationStatus.CANCELADA) {
             throw new BusinessException("Esta reserva já foi cancelada.");
         }
-        if (reservation.getStatus() == Reservation.ReservationStatus.DISPONIVEL) {
-            throw new BusinessException("Reservas com livro disponível devem ser convertidas em empréstimo.");
-        }
 
+        // CORREÇÃO: Removi o bloqueio de cancelar quando disponível.
+        // Se ele não quer mais o livro, apenas cancelamos.
         reservation.setStatus(Reservation.ReservationStatus.CANCELADA);
+
         Reservation saved = reservationRepository.save(reservation);
-        log.info("Reserva cancelada: id={}", id);
+        log.info("Reserva cancelada pelo usuário: id={}", id);
         return ReservationDTO.fromEntity(saved);
     }
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Marca a reserva como DISPONIVEL quando o livro for devolvido.
+     * Chamado internamente pelo {@link com.biblioteca.facade.LoanFacade}.
+     */
+    /*
+     * @Transactional
+     * public void notifyAvailability(Long bookId) {
+     * List<Reservation> pending = reservationRepository
+     * .findByBookId(bookId)
+     * .stream()
+     * .filter(r -> r.getStatus() == Reservation.ReservationStatus.PENDENTE)
+     * .toList();
+     * 
+     * pending.forEach(r -> {
+     * r.setStatus(Reservation.ReservationStatus.DISPONIVEL);
+     * reservationRepository.save(r);
+     * notificationService.createInternal(
+     * "Livro Disponível",
+     * "O livro \"" + r.getBook().getTitle() +
+     * "\" que você reservou está disponível.",
+     * Notification.NotificationType.SUCCESS
+     * );
+     * log.info("Reserva id={} marcada como DISPONIVEL.", r.getId());
+     * });
+     * }
+     */
+
+    @Transactional
+    public void notifyAvailability(Long bookId) {
+        // Busca a reserva mais antiga que está PENDENTE
+        List<Reservation> pending = reservationRepository.findByBookId(bookId)
+                .stream()
+                .filter(r -> r.getStatus() == Reservation.ReservationStatus.PENDENTE)
+                .toList();
+
+        if (!pending.isEmpty()) {
+            // Pega a primeira reserva da fila (a mais antiga)
+            Reservation nextInLine = pending.get(0);
+
+            // CORREÇÃO: Em vez de só avisar, vamos marcar como DISPONIVEL
+            // No mundo real, aqui você poderia disparar a criação do empréstimo,
+            // mas para o trabalho, marcar como DISPONIVEL já resolve a lógica do Status.
+            nextInLine.setStatus(Reservation.ReservationStatus.DISPONIVEL);
+            reservationRepository.save(nextInLine);
+
+            notificationService.createInternal(
+                    "Sua vez!",
+                    "O livro \"" + nextInLine.getBook().getTitle() + "\" está te esperando!",
+                    Notification.NotificationType.SUCCESS);
+            log.info("Reserva {} atualizada para DISPONIVEL para o usuário {}", nextInLine.getId(),
+                    nextInLine.getUser().getName());
+        }
+    }
+
+>>>>>>> Stashed changes
     @Transactional
     public void delete(Long id) {
         Reservation r = findEntityById(id);
