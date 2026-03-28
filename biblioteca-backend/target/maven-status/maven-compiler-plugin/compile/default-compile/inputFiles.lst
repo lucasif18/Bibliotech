@@ -7,8 +7,8 @@ C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\bibliotec
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\controller\UserController.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\state\AtivoState.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\config\PasswordConfig.java
-C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\factory\ProfessorCreator.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\model\ActivityLog.java
+C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\security\AuthorizationService.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\repository\BookRepository.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\proxy\LoanServiceProxy.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\state\FinalizadoState.java
@@ -30,6 +30,7 @@ C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\bibliotec
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\service\ActivityLogService.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\repository\UserRepository.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\LoanDTO.java
+C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\model\UserRole.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\controller\DashboardController.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\controller\ReservationController.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\service\NotificationService.java
@@ -46,6 +47,7 @@ C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\bibliotec
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\BookDTO.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\factory\VisitanteCreator.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\AuthUserDTO.java
+C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\factory\AdministradorCreator.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\DashboardStatsDTO.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\repository\NotificationRepository.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\repository\ReservationRepository.java
@@ -53,7 +55,6 @@ C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\bibliotec
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\service\BookService.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\ActivityLogDTO.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\controller\LoginController.java
-C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\factory\AlunoCreator.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\service\DashboardService.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\state\LoanStateFactory.java
 C:\Users\games\Desktop\Bibliotech\biblioteca-backend\src\main\java\com\biblioteca\dto\UpdateProfileDTO.java

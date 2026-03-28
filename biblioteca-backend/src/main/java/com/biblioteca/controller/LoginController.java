@@ -32,6 +32,7 @@ public class LoginController {
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(mapTypeToRole(user.getType()))
+                .type(user.getType().toString().toLowerCase())
                 .build();
 
         return ResponseEntity.ok(LoginResponseDTO.builder()  
@@ -63,6 +64,7 @@ public class LoginController {
                             .name(updated.getName())
                             .email(updated.getEmail())
                             .role(mapTypeToRole(updated.getType()))
+                            .type(updated.getType().toString().toLowerCase())
                             .build();
                     return ResponseEntity.ok(authUser);
                 })

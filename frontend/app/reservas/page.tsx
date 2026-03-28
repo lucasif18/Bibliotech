@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -45,7 +46,7 @@ const statusLabels: Record<string, string> = {
   cancelada: 'Cancelada',
 }
 
-export default function ReservasPage() {
+function ReservasContent() {
   const { reservations, isLoading: reservationsLoading, error, refetch, createReservation, cancelReservation } = useReservations()
   const { users, isLoading: usersLoading } = useUsers()
   const { books, isLoading: booksLoading } = useBooks()
@@ -329,5 +330,13 @@ export default function ReservasPage() {
         </Dialog>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function ReservasPage() {
+  return (
+    <ProtectedRoute requiredPermission="admin">
+      <ReservasContent />
+    </ProtectedRoute>
   )
 }

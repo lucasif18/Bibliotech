@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { usePermissions } from '@/hooks/use-permissions'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -19,17 +20,28 @@ interface SidebarProps {
   onClose: () => void
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Livros', href: '/livros', icon: BookOpen },
-  { name: 'Usuários', href: '/usuarios', icon: Users },
-  { name: 'Empréstimos', href: '/emprestimos', icon: ArrowLeftRight },
-  { name: 'Reservas', href: '/reservas', icon: CalendarClock },
-  { name: 'Notificações', href: '/notificacoes', icon: Bell },
+// Definição de itens de navegação com suas permissões
+const navigationItems = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, adminOnly: false },
+  { name: 'Livros', href: '/livros', icon: BookOpen, adminOnly: true },
+  { name: 'Usuários', href: '/usuarios', icon: Users, adminOnly: true },
+  { name: 'Empréstimos', href: '/emprestimos', icon: ArrowLeftRight, adminOnly: false },
+  { name: 'Reservas', href: '/reservas', icon: CalendarClock, adminOnly: true },
+  { name: 'Notificações', href: '/notificacoes', icon: Bell, adminOnly: false },
 ]
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const { isAdmin } = usePermissions()
+  const isAdminUser = isAdmin()
+
+  // Filtra itens de navegação baseado em permissões
+  const visibleItems = navigationItems.filter((item) => {
+    if (item.adminOnly && !isAdminUser) {
+      return false
+    }
+    return true
+  })
 
   return (
     <>
@@ -68,7 +80,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         {/* Navegação */}
         <nav className="flex-1 space-y-1 px-3 py-4">
-          {navigation.map((item) => {
+          {visibleItems.map((item) => {
             const isActive = pathname === item.href || (item.href === '/dashboard' && pathname === '/')
             return (
               <Link

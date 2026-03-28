@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -44,7 +45,7 @@ const userTypeColors: Record<string, string> = {
   visitante: 'bg-chart-3/10 text-chart-3',
 }
 
-export default function UsuariosPage() {
+function UsuariosContent() {
   const { users, isLoading, error, refetch, createUser, updateUser, deleteUser } = useUsers()
   
   const [searchTerm, setSearchTerm] = useState('')
@@ -356,5 +357,13 @@ export default function UsuariosPage() {
         </Dialog>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function UsuariosPage() {
+  return (
+    <ProtectedRoute requiredPermission="admin">
+      <UsuariosContent />
+    </ProtectedRoute>
   )
 }

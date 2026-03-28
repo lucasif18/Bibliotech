@@ -9,6 +9,7 @@ export interface AuthUser {
   name: string
   email: string
   role: 'admin' | 'bibliotecario' | 'usuario'
+  type: 'administrador' | 'visitante'
 }
 
 export interface LoginDTO {

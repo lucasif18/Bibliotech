@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -33,7 +34,7 @@ import { useBooks } from '@/hooks/use-api'
 import { categories, type Book } from '@/lib/types'
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react'
 
-export default function LivrosPage() {
+function LivrosContent() {
   const { books, isLoading, error, refetch, createBook, updateBook, deleteBook } = useBooks()
   
   const [searchTerm, setSearchTerm] = useState('')
@@ -361,5 +362,13 @@ export default function LivrosPage() {
         </Dialog>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function LivrosPage() {
+  return (
+    <ProtectedRoute requiredPermission="admin">
+      <LivrosContent />
+    </ProtectedRoute>
   )
 }

@@ -29,7 +29,9 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { LoadingState, ErrorState } from '@/components/ui/loading-state'
-import { useLoans, useUsers, useBooks } from '@/hooks/use-api'
+import { AdminOnly } from '@/components/auth/permission-components'
+import { useAuthContext } from '@/components/auth/auth-provider'
+import { useLoansForCurrentUser, useUsers, useBooks } from '@/hooks/use-api'
 import type { Loan } from '@/lib/types'
 import { Plus, Search, BookCheck, AlertCircle } from 'lucide-react'
 
@@ -46,7 +48,8 @@ const statusLabels: Record<string, string> = {
 }
 
 export default function EmprestimosPage() {
-  const { loans, isLoading: loansLoading, error: loansError, refetch, createLoan, returnBook } = useLoans()
+  const { loans, isLoading: loansLoading, error: loansError, refetch, createLoan, returnBook } = useLoansForCurrentUser()
+  const { user } = useAuthContext()
   const { users, isLoading: usersLoading } = useUsers()
   const { books, isLoading: booksLoading } = useBooks()
   
@@ -55,6 +58,7 @@ export default function EmprestimosPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isReturnDialogOpen, setIsReturnDialogOpen] = useState(false)
   const [loanToReturn, setLoanToReturn] = useState<Loan | null>(null)
+  const [returnError, setReturnError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [formData, setFormData] = useState({
@@ -98,10 +102,15 @@ export default function EmprestimosPage() {
   const handleReturnBook = async () => {
     if (loanToReturn) {
       setIsSubmitting(true)
+      setReturnError(null)
       try {
-        await returnBook(loanToReturn.id)
-        setIsReturnDialogOpen(false)
-        setLoanToReturn(null)
+        const result = await returnBook(loanToReturn.id)
+        if (result.success) {
+          setIsReturnDialogOpen(false)
+          setLoanToReturn(null)
+        } else {
+          setReturnError(result.error || 'Erro ao registrar devolução')
+        }
       } finally {
         setIsSubmitting(false)
       }
@@ -110,6 +119,7 @@ export default function EmprestimosPage() {
 
   const openReturnDialog = (loan: Loan) => {
     setLoanToReturn(loan)
+    setReturnError(null)
     setIsReturnDialogOpen(true)
   }
 
@@ -134,10 +144,12 @@ export default function EmprestimosPage() {
               Gerencie os empréstimos de livros
             </p>
           </div>
-          <Button onClick={handleOpenDialog} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Novo Empréstimo
-          </Button>
+          <AdminOnly>
+            <Button onClick={handleOpenDialog} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Novo Empréstimo
+            </Button>
+          </AdminOnly>
         </div>
 
         {/* Alertas */}
@@ -333,7 +345,7 @@ export default function EmprestimosPage() {
         </Dialog>
 
         {/* Dialog de Confirmação de Devolução */}
-        <Dialog open={isReturnDialogOpen} onOpenChange={setIsReturnDialogOpen}>
+        <Dialog open={isReturnDialogOpen} onOpenChange={(open) => { setIsReturnDialogOpen(open); if (!open) setReturnError(null) }}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Confirmar Devolução</DialogTitle>
@@ -341,6 +353,12 @@ export default function EmprestimosPage() {
                 Confirmar a devolução do livro &quot;{loanToReturn?.bookTitle}&quot; emprestado para {loanToReturn?.userName}?
               </DialogDescription>
             </DialogHeader>
+            {returnError && (
+              <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/10 p-3">
+                <AlertCircle className="h-4 w-4 text-destructive shrink-0" />
+                <p className="text-sm text-destructive">{returnError}</p>
+              </div>
+            )}
             <DialogFooter>
               <Button
                 variant="outline"

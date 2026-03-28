@@ -15,6 +15,7 @@ public class AuthUserDTO {
     private String name;
     private String email;
     private String role;
+    private String type;
 
     public static AuthUserDTO fromUser(User user) {
         String role;
@@ -32,6 +33,7 @@ public class AuthUserDTO {
                 .name(user.getName())
                 .email(user.getEmail())
                 .role(role)
+                .type(user.getType().toString().toLowerCase())
                 .build();
     }
 }

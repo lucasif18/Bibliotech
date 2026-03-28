@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useAuthContext } from '@/components/auth/auth-provider'
 import { api, ApiError } from '@/lib/api'
 import type {
   Book,
@@ -195,6 +196,83 @@ export function useLoans() {
       setState({ data: null, isLoading: false, error: message })
     }
   }, [])
+
+  const createLoan = useCallback(async (data: CreateLoanDTO) => {
+    try {
+      await api.loans.create(data)
+      await fetchLoans()
+      return { success: true }
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : 'Erro ao criar empréstimo'
+      return { success: false, error: message }
+    }
+  }, [fetchLoans])
+
+  const returnBook = useCallback(async (id: string) => {
+    try {
+      await api.loans.returnBook(id)
+      await fetchLoans()
+      return { success: true }
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : 'Erro ao registrar devolução'
+      return { success: false, error: message }
+    }
+  }, [fetchLoans])
+
+  useEffect(() => {
+    fetchLoans()
+  }, [fetchLoans])
+
+  return {
+    loans: state.data || [],
+    isLoading: state.isLoading,
+    error: state.error,
+    refetch: fetchLoans,
+    createLoan,
+    returnBook,
+  }
+}
+
+/**
+ * ============================================
+ * HOOK: useLoansForCurrentUser
+ * ============================================
+ * Hook personalizado que carrega empréstimos baseado no tipo de usuário:
+ * - Admin: vê todos os empréstimos
+ * - Visitante: vê apenas seus próprios empréstimos
+ */
+export function useLoansForCurrentUser() {
+  const { user } = useAuthContext()
+  const [state, setState] = useState<ApiState<Loan[]>>({
+    data: null,
+    isLoading: true,
+    error: null,
+  })
+
+  const fetchLoans = useCallback(async () => {
+    if (!user) {
+      setState({ data: [], isLoading: false, error: 'Usuário não autenticado' })
+      return
+    }
+
+    setState((prev) => ({ ...prev, isLoading: true, error: null }))
+    try {
+      let data: Loan[]
+
+      if (user.type === 'administrador') {
+        // Admin vê todos os empréstimos
+        data = await api.loans.getAll()
+      } else {
+        // Visitante vê apenas seus empréstimos
+        data = await api.loans.getByUser(user.id)
+      }
+
+      setState({ data, isLoading: false, error: null })
+    } catch (err) {
+      const message = err instanceof ApiError ? err.message : 'Erro ao carregar empréstimos'
+      setState({ data: null, isLoading: false, error: message })
+    }
+  }, [user])
 
   const createLoan = useCallback(async (data: CreateLoanDTO) => {
     try {

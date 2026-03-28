@@ -262,7 +262,7 @@ export const loanService = {
    * Busca empréstimos de um usuário
    */
   async getByUser(userId: string): Promise<Loan[]> {
-    return fetchApi<Loan[]>(`/emprestimos?userId=${userId}`)
+    return fetchApi<Loan[]>(`/emprestimos/usuario/${userId}`)
   },
 
   /**
@@ -280,7 +280,7 @@ export const loanService = {
    */
   async returnBook(id: string): Promise<Loan> {
     return fetchApi<Loan>(`/emprestimos/${id}/devolver`, {
-      method: 'PATCH',
+      method: 'POST',
     })
   },
 
