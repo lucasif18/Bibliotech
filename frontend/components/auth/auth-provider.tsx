@@ -50,8 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Usuário não autenticado tentando acessar rota protegida
       router.push('/login')
     } else if (isAuthenticated && pathname === '/login') {
-      // Usuário autenticado na página de login, redireciona para dashboard
-      router.push('/dashboard')
+      // Usuário autenticado na página de login, redireciona baseado no tipo
+      if (user.type === 'visitante') {
+        router.push('/welcome')
+      } else {
+        router.push('/dashboard')
+      }
     }
   }, [user, isLoading, pathname, router])
 

@@ -42,12 +42,12 @@ export function ProtectedRoute({ children, requiredPermission = null }: Protecte
 
     // Verifica permissões específicas
     if (requiredPermission === 'admin' && !isAdmin()) {
-      router.push('/dashboard')
+      router.push('/welcome')
       return
     }
 
     if (requiredPermission === 'write' && !hasWriteAccess()) {
-      router.push('/dashboard')
+      router.push('/welcome')
       return
     }
   }, [user, requiredPermission, isAdmin, hasWriteAccess, router])

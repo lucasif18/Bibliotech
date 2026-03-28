@@ -1,5 +1,6 @@
 'use client'
 
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { StatsCard } from '@/components/dashboard/stats-card'
 import { ActivityList } from '@/components/dashboard/activity-list'
@@ -8,7 +9,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { useDashboard } from '@/hooks/use-api'
 import { BookOpen, Users, ArrowLeftRight, BookCheck } from 'lucide-react'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { stats, books, loans, isLoading, error, refetch } = useDashboard()
 
   // Calcular estatísticas a partir dos dados carregados se stats não estiver disponível
@@ -143,5 +144,13 @@ export default function DashboardPage() {
         </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <ProtectedRoute requiredPermission="admin">
+      <DashboardContent />
+    </ProtectedRoute>
   )
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { ProtectedRoute } from '@/components/auth/protected-route'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -21,7 +22,7 @@ const notificationColors: Record<string, string> = {
   success: 'bg-success/10 text-success border-success/20',
 }
 
-export default function NotificacoesPage() {
+function NotificacoesContent() {
   const {
     notifications,
     unreadCount,
@@ -193,5 +194,13 @@ export default function NotificacoesPage() {
         </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function NotificacoesPage() {
+  return (
+    <ProtectedRoute requiredPermission="admin">
+      <NotificacoesContent />
+    </ProtectedRoute>
   )
 }

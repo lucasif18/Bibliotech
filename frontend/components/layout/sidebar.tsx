@@ -22,22 +22,26 @@ interface SidebarProps {
 
 // Definição de itens de navegação com suas permissões
 const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, adminOnly: false },
+  { name: 'Bem-vindo', href: '/welcome', icon: Library, adminOnly: false, visitorOnly: true },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, adminOnly: true },
   { name: 'Livros', href: '/livros', icon: BookOpen, adminOnly: true },
   { name: 'Usuários', href: '/usuarios', icon: Users, adminOnly: true },
   { name: 'Empréstimos', href: '/emprestimos', icon: ArrowLeftRight, adminOnly: false },
   { name: 'Reservas', href: '/reservas', icon: CalendarClock, adminOnly: true },
-  { name: 'Notificações', href: '/notificacoes', icon: Bell, adminOnly: false },
+  { name: 'Notificações', href: '/notificacoes', icon: Bell, adminOnly: true },
 ]
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
-  const { isAdmin } = usePermissions()
+  const { isAdmin, user } = usePermissions()
   const isAdminUser = isAdmin()
 
   // Filtra itens de navegação baseado em permissões
   const visibleItems = navigationItems.filter((item) => {
     if (item.adminOnly && !isAdminUser) {
+      return false
+    }
+    if ((item as any).visitorOnly && isAdminUser) {
       return false
     }
     return true
