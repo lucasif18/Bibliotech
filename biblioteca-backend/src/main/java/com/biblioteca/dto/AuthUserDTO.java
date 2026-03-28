@@ -19,10 +19,9 @@ public class AuthUserDTO {
     public static AuthUserDTO fromUser(User user) {
         String role;
         switch (user.getType()) {
-            case PROFESSOR:
+            case ADMINISTRADOR:
                 role = "bibliotecario";
                 break;
-            case ALUNO:
             case VISITANTE:
             default:
                 role = "usuario";

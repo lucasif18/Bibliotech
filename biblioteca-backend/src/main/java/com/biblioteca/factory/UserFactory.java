@@ -27,7 +27,7 @@ public class UserFactory {
     /**
      * Cria um usuário com base no tipo informado.
      *
-     * @param type  "aluno", "professor" ou "visitante" (case-insensitive)
+     * @param type  "administrador" ou "visitante" (case-insensitive)
      * @param name  nome do usuário
      * @param email e-mail do usuário
      * @return instância de {@link User} pronta para persistência
@@ -37,7 +37,7 @@ public class UserFactory {
         UserCreator creator = creators.get(key);
         if (creator == null) {
             throw new IllegalArgumentException(
-                    "Tipo de usuário inválido: '%s'. Use: aluno, professor ou visitante.".formatted(type));
+                    "Tipo de usuário inválido: '%s'. Use: administrador ou visitante.".formatted(type));
         }
         return creator.create(name, email);
     }

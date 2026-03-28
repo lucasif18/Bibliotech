@@ -44,13 +44,12 @@ public class User {
      */
     public int getMaxLoans() {
         return switch (this.type) {
-            case PROFESSOR  -> 10;
-            case ALUNO      -> 5;
-            case VISITANTE  -> 2;
+            case ADMINISTRADOR  -> 10;
+            case VISITANTE      -> 2;
         };
     }
 
     public enum UserType {
-        ALUNO, PROFESSOR, VISITANTE
+        ADMINISTRADOR, VISITANTE
     }
 }

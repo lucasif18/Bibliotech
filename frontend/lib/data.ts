@@ -34,17 +34,15 @@ export const mockBooks: Book[] = [
  * @deprecated Use api.users.getAll() do lib/api.ts
  */
 export const mockUsers: User[] = [
-  { id: '1', name: 'Ana Silva', email: 'ana.silva@email.com', type: 'aluno', createdAt: '2024-01-15' },
-  { id: '2', name: 'Carlos Oliveira', email: 'carlos.oliveira@email.com', type: 'professor', createdAt: '2024-02-20' },
-  { id: '3', name: 'Maria Santos', email: 'maria.santos@email.com', type: 'aluno', createdAt: '2024-03-10' },
+  { id: '1', name: 'Carlos Oliveira', email: 'carlos.oliveira@email.com', type: 'administrador', createdAt: '2024-02-20' },
+  { id: '2', name: 'João Ferreira', email: 'joao.ferreira@email.com', type: 'visitante', createdAt: '2024-04-05' },
 ]
 
 /**
  * @deprecated Use api.loans.getAll() do lib/api.ts
  */
 export const mockLoans: Loan[] = [
-  { id: '1', userId: '1', userName: 'Ana Silva', bookId: '2', bookTitle: '1984', loanDate: '2024-03-01', returnDate: '2024-03-15', status: 'ativo' },
-  { id: '2', userId: '2', userName: 'Carlos Oliveira', bookId: '6', bookTitle: 'Harry Potter', loanDate: '2024-02-20', returnDate: '2024-03-05', status: 'atrasado' },
+  { id: '1', userId: '1', userName: 'Carlos Oliveira', bookId: '6', bookTitle: 'Harry Potter', loanDate: '2024-02-20', returnDate: '2024-03-05', status: 'atrasado' },
 ]
 
 /**

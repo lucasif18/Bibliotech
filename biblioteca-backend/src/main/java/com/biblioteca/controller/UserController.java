@@ -16,7 +16,7 @@ import java.util.List;
  *   GET    /api/usuarios             — lista todos os usuários
  *   GET    /api/usuarios/{id}        — busca usuário por ID
  *   GET    /api/usuarios/busca       — busca por nome ou e-mail (?q=)
- *   GET    /api/usuarios/tipo        — filtra por tipo (?tipo=aluno|professor|visitante)
+ *   GET    /api/usuarios/tipo        — filtra por tipo (?tipo=administrador|visitante)
  *   POST   /api/usuarios             — cadastra novo usuário (via Factory Method)
  *   PUT    /api/usuarios/{id}        — atualiza usuário
  *   DELETE /api/usuarios/{id}        — remove usuário

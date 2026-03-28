@@ -49,7 +49,7 @@ export interface User {
   id: string
   name: string
   email: string
-  type: 'aluno' | 'professor' | 'visitante'
+  type: 'administrador' | 'visitante'
   createdAt: string
 }
 
@@ -114,7 +114,7 @@ export interface UpdateBookDTO extends Partial<CreateBookDTO> {}
 export interface CreateUserDTO {
   name: string
   email: string
-  type: 'aluno' | 'professor' | 'visitante'
+  type: 'administrador' | 'visitante'
 }
 
 export interface UpdateUserDTO extends Partial<CreateUserDTO> {}

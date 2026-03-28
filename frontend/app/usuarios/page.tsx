@@ -35,14 +35,12 @@ import type { User } from '@/lib/types'
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react'
 
 const userTypes = [
-  { value: 'aluno', label: 'Aluno' },
-  { value: 'professor', label: 'Professor' },
+  { value: 'administrador', label: 'Administrador' },
   { value: 'visitante', label: 'Visitante' },
 ]
 
 const userTypeColors: Record<string, string> = {
-  aluno: 'bg-chart-2/10 text-chart-2',
-  professor: 'bg-primary/10 text-primary',
+  administrador: 'bg-primary/10 text-primary',
   visitante: 'bg-chart-3/10 text-chart-3',
 }
 
@@ -60,7 +58,7 @@ export default function UsuariosPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    type: 'aluno' as 'aluno' | 'professor' | 'visitante',
+    type: 'administrador' as 'administrador' | 'visitante',
   })
 
   const filteredUsers = users.filter((user) => {
@@ -84,7 +82,7 @@ export default function UsuariosPage() {
       setFormData({
         name: '',
         email: '',
-        type: 'aluno',
+        type: 'administrador',
       })
     }
     setIsDialogOpen(true)
@@ -305,7 +303,7 @@ export default function UsuariosPage() {
                 <Label htmlFor="type">Tipo</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(value: 'aluno' | 'professor' | 'visitante') =>
+                  onValueChange={(value: 'administrador' | 'visitante') =>
                     setFormData({ ...formData, type: value })
                   }
                 >

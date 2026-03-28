@@ -67,7 +67,7 @@ export default function DashboardPage() {
           <StatsCard
             title="Usuários Cadastrados"
             value={displayStats.totalUsers}
-            description="Alunos, professores e visitantes"
+            description="Administradores e visitantes"
             icon={Users}
             trend={{ value: 8, isPositive: true }}
           />

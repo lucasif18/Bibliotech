@@ -72,23 +72,14 @@ public class DataSeeder implements CommandLineRunner {
 
     private void seedUsers() {
         List<User> users = List.of(
-            User.builder().name("Ana Silva").email("ana.silva@email.com")
-                .password(passwordEncoder.encode("123456")).type(User.UserType.ALUNO)
-                .createdAt(LocalDate.of(2024, 1, 15)).build(),
             User.builder().name("Carlos Oliveira").email("carlos.oliveira@email.com")
-                .password(passwordEncoder.encode("123456")).type(User.UserType.PROFESSOR)
+                .password(passwordEncoder.encode("123456")).type(User.UserType.ADMINISTRADOR)
                 .createdAt(LocalDate.of(2024, 2, 20)).build(),
-            User.builder().name("Maria Santos").email("maria.santos@email.com")
-                .password(passwordEncoder.encode("123456")).type(User.UserType.ALUNO)
-                .createdAt(LocalDate.of(2024, 3, 10)).build(),
             User.builder().name("João Ferreira").email("joao.ferreira@email.com")
                 .password(passwordEncoder.encode("123456")).type(User.UserType.VISITANTE)
                 .createdAt(LocalDate.of(2024, 4, 5)).build(),
-            User.builder().name("Beatriz Lima").email("beatriz.lima@email.com")
-                .password(passwordEncoder.encode("123456")).type(User.UserType.ALUNO)
-                .createdAt(LocalDate.of(2024, 5, 12)).build(),
             User.builder().name("Pedro Costa").email("pedro.costa@email.com")
-                .password(passwordEncoder.encode("123456")).type(User.UserType.PROFESSOR)
+                .password(passwordEncoder.encode("123456")).type(User.UserType.ADMINISTRADOR)
                 .createdAt(LocalDate.of(2024, 6, 18)).build()
         );
         userRepository.saveAll(users);
@@ -96,11 +87,9 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedLoans() {
-        User ana      = userRepository.findByEmail("ana.silva@email.com").orElseThrow();
         User carlos   = userRepository.findByEmail("carlos.oliveira@email.com").orElseThrow();
-        User maria    = userRepository.findByEmail("maria.santos@email.com").orElseThrow();
-        User beatriz  = userRepository.findByEmail("beatriz.lima@email.com").orElseThrow();
         User joao     = userRepository.findByEmail("joao.ferreira@email.com").orElseThrow();
+        User pedro    = userRepository.findByEmail("pedro.costa@email.com").orElseThrow();
 
         Book orwell   = bookRepository.findByIsbn("978-85-359-0278-8").orElseThrow(); // 1984
         Book harry    = bookRepository.findByIsbn("978-85-359-0282-5").orElseThrow(); // Harry Potter
@@ -109,7 +98,7 @@ public class DataSeeder implements CommandLineRunner {
         Book aneis    = bookRepository.findByIsbn("978-85-359-0279-5").orElseThrow(); // Senhor dos Anéis
 
         List<Loan> loans = List.of(
-            Loan.builder().user(ana).book(orwell)
+            Loan.builder().user(carlos).book(orwell)
                 .loanDate(LocalDate.of(2024, 3, 1))
                 .returnDate(LocalDate.of(2024, 3, 15))
                 .status(Loan.LoanStatus.ATIVO).build(),
@@ -117,11 +106,11 @@ public class DataSeeder implements CommandLineRunner {
                 .loanDate(LocalDate.of(2024, 2, 20))
                 .returnDate(LocalDate.of(2024, 3, 5))
                 .status(Loan.LoanStatus.ATRASADO).build(),
-            Loan.builder().user(maria).book(dom)
+            Loan.builder().user(pedro).book(dom)
                 .loanDate(LocalDate.of(2024, 2, 10))
                 .returnDate(LocalDate.of(2024, 2, 24))
                 .status(Loan.LoanStatus.FINALIZADO).build(),
-            Loan.builder().user(beatriz).book(clean)
+            Loan.builder().user(pedro).book(clean)
                 .loanDate(LocalDate.of(2024, 3, 5))
                 .returnDate(LocalDate.of(2024, 3, 19))
                 .status(Loan.LoanStatus.ATIVO).build(),
@@ -135,22 +124,20 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedReservations() {
-        User maria   = userRepository.findByEmail("maria.santos@email.com").orElseThrow();
-        User beatriz = userRepository.findByEmail("beatriz.lima@email.com").orElseThrow();
-        User ana     = userRepository.findByEmail("ana.silva@email.com").orElseThrow();
+        User pedro   = userRepository.findByEmail("pedro.costa@email.com").orElseThrow();
 
         Book orwell  = bookRepository.findByIsbn("978-85-359-0278-8").orElseThrow();
         Book harry   = bookRepository.findByIsbn("978-85-359-0282-5").orElseThrow();
         Book sapiens = bookRepository.findByIsbn("978-85-359-0284-9").orElseThrow();
 
         List<Reservation> reservations = List.of(
-            Reservation.builder().user(maria).book(orwell)
+            Reservation.builder().user(pedro).book(orwell)
                 .reservationDate(LocalDate.of(2024, 3, 10))
                 .status(Reservation.ReservationStatus.PENDENTE).build(),
-            Reservation.builder().user(beatriz).book(harry)
+            Reservation.builder().user(pedro).book(harry)
                 .reservationDate(LocalDate.of(2024, 3, 12))
                 .status(Reservation.ReservationStatus.PENDENTE).build(),
-            Reservation.builder().user(ana).book(sapiens)
+            Reservation.builder().user(pedro).book(sapiens)
                 .reservationDate(LocalDate.of(2024, 3, 8))
                 .status(Reservation.ReservationStatus.DISPONIVEL).build()
         );

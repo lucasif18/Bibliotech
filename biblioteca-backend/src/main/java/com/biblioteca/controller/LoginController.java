@@ -82,7 +82,7 @@ public class LoginController {
     }
 
     private String mapTypeToRole(String type) {
-        if ("professor".equalsIgnoreCase(type)) {
+        if ("administrador".equalsIgnoreCase(type)) {
             return "bibliotecario";
         }
         return "usuario";

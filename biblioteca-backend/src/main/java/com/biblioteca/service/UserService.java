@@ -58,7 +58,7 @@ public class UserService {
 
     /**
      * Delega a criação ao PADRÃO FACTORY METHOD — o UserFactory
-     * seleciona o criador adequado (Aluno, Professor ou Visitante).
+     * seleciona o criador adequado (Administrador ou Visitante).
      */
     @Transactional
     public UserDTO create(UserDTO dto) {
@@ -154,7 +154,7 @@ public class UserService {
             return User.UserType.valueOf(type.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(
-                    "Tipo inválido: '%s'. Use: aluno, professor ou visitante.".formatted(type));
+                    "Tipo inválido: '%s'. Use: administrador ou visitante.".formatted(type));
         }
     }
 }

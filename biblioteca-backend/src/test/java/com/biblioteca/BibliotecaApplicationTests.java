@@ -71,33 +71,33 @@ class BibliotecaApplicationTests {
     // ─── Usuários ────────────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Deve criar usuário aluno via Factory Method")
-    void deveCriarAlunoViaFactory() {
+    @DisplayName("Deve criar usuário administrador via Factory Method")
+    void deveCriarAdministradorViaFactory() {
         UserDTO dto = UserDTO.builder()
-                .name("Novo Aluno").email("novo.aluno@test.com").type("aluno").password("123456").build();
+                .name("Novo Administrador").email("novo.admin@test.com").type("administrador").password("123456").build();
 
         UserDTO created = userService.create(dto);
 
-        assertThat(created.getType()).isEqualTo("aluno");
+        assertThat(created.getType()).isEqualTo("administrador");
         assertThat(created.getId()).isNotNull();
     }
 
     @Test
-    @DisplayName("Deve criar usuário professor via Factory Method")
-    void deveCriarProfessorViaFactory() {
+    @DisplayName("Deve criar usuário visitante via Factory Method")
+    void deveCriarVisitanteViaFactory() {
         UserDTO dto = UserDTO.builder()
-                .name("Novo Professor").email("novo.prof@test.com").type("professor").password("123456").build();
+                .name("Novo Visitante").email("novo.visitante@test.com").type("visitante").password("123456").build();
 
         UserDTO created = userService.create(dto);
-        assertThat(created.getType()).isEqualTo("professor");
+        assertThat(created.getType()).isEqualTo("visitante");
     }
 
     @Test
     @DisplayName("Não deve criar usuário com e-mail duplicado")
     void naoDeveCriarUsuarioEmailDuplicado() {
         UserDTO dto = UserDTO.builder()
-                .name("Cópia").email("ana.silva@email.com") // e-mail já cadastrado
-                .type("aluno").build();
+                .name("Cópia").email("carlos.oliveira@email.com") // e-mail já cadastrado
+                .type("administrador").build();
 
         assertThatThrownBy(() -> userService.create(dto))
                 .hasMessageContaining("E-mail");

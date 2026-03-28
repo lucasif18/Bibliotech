@@ -46,8 +46,7 @@ src/main/java/com/biblioteca/
 │
 ├── factory/             ← 🏭 PADRÃO FACTORY METHOD
 │   ├── UserCreator        (interface)
-│   ├── AlunoCreator       (concreto)
-│   ├── ProfessorCreator   (concreto)
+│   ├── AdministradorCreator (concreto)
 │   ├── VisitanteCreator   (concreto)
 │   └── UserFactory        (coordenador)
 │
@@ -91,9 +90,8 @@ Centraliza a criação de usuários por tipo, eliminando `if/else` no serviço e
 
 ```
 UserFactory → escolhe o Creator correto
-  ├── AlunoCreator     → cria User(ALUNO,   max=5 empréstimos)
-  ├── ProfessorCreator → cria User(PROFESSOR, max=10 empréstimos)
-  └── VisitanteCreator → cria User(VISITANTE, max=2 empréstimos)
+  ├── AdministradorCreator → cria User(ADMINISTRADOR, max=10 empréstimos)
+  └── VisitanteCreator     → cria User(VISITANTE, max=2 empréstimos)
 ```
 
 ---
@@ -119,11 +117,10 @@ Intercepta as operações sensíveis antes de chegar ao Facade:
 Controller → LoanServiceProxy (verifica limites/permissões) → LoanFacade
 ```
 
-| Tipo       | Limite de empréstimos |
-|------------|----------------------|
-| Visitante  | 2                    |
-| Aluno      | 5                    |
-| Professor  | 10                   |
+| Tipo          | Limite de empréstimos |
+|---------------|----------------------|
+| Visitante     | 2                    |
+| Administrador | 10                   |
 
 ---
 
@@ -288,7 +285,7 @@ mvn test
 ```
 
 Os testes de integração validam:
-- Criação via Factory Method (Aluno, Professor)
+- Criação via Factory Method (Administrador, Visitante)
 - Listagem de livros disponíveis via Iterator
 - Validações de negócio (ISBN duplicado, e-mail duplicado)
 - Atualização de status via Iterator

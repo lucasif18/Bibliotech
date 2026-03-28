@@ -23,9 +23,8 @@ import org.springframework.stereotype.Component;
  * O Controller faz referência apenas a este Proxy — nunca ao Facade diretamente.
  *
  * Regras de acesso:
- *   - VISITANTE : máx. 2 empréstimos simultâneos
- *   - ALUNO     : máx. 5 empréstimos simultâneos
- *   - PROFESSOR : máx. 10 empréstimos simultâneos
+ *   - VISITANTE      : máx. 2 empréstimos simultâneos
+ *   - ADMINISTRADOR  : máx. 10 empréstimos simultâneos
  */
 @Component
 @RequiredArgsConstructor

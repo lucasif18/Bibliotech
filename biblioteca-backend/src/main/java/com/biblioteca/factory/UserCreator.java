@@ -7,7 +7,7 @@ import com.biblioteca.model.User;
  *
  * Interface que declara o método fábrica para criação de usuários.
  * Cada implementação concreta sabe como instanciar e configurar
- * um tipo específico de usuário (Aluno, Professor, Visitante).
+ * um tipo específico de usuário (Administrador, Visitante).
  */
 public interface UserCreator {
 
