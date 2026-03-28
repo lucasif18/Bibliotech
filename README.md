@@ -6,6 +6,46 @@ O backend está em `biblioteca-backend/` e foi construído com Spring Boot, JPA 
 
 ---
 
+## Como rodar?
+
+### Pré-requisitos
+
+- Java 17+
+- Maven 3.8+
+- Node.js instalado
+- npm disponível no terminal
+
+### Rodando o backend
+
+```bash
+cd biblioteca-backend
+mvn spring-boot:run
+```
+
+### Rodando o frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Serviços disponíveis em desenvolvimento
+
+- Interface web: `http://localhost:3000`
+- API backend: `http://localhost:8080`
+- H2 Console: `http://localhost:8080/h2-console`
+
+### Gerar build do backend
+
+```bash
+cd biblioteca-backend
+mvn clean package -DskipTests
+java -jar target/biblioteca-digital-1.0.0.jar
+```
+
+---
+
 ## Arquitetura
 
 ```text
@@ -68,36 +108,6 @@ Iteradores específicos percorrem coleções de livros e empréstimos de forma e
 | Lombok | 1.18.x | Redução de boilerplate |
 | Bean Validation | Jakarta | Validação dos DTOs |
 | Maven | 3.8+ | Build e dependências |
-
----
-
-## Como Executar
-
-### Pré-requisitos
-
-- Java 17+
-- Maven 3.8+
-
-### Execução local
-
-```bash
-cd biblioteca-backend
-mvn spring-boot:run
-```
-
-Serviços disponíveis em desenvolvimento:
-
-- Interface web: `http://localhost:3000`
-- API backend: `http://localhost:8080`
-- H2 Console: `http://localhost:8080/h2-console`
-
-### Empacotar
-
-```bash
-cd biblioteca-backend
-mvn clean package -DskipTests
-java -jar target/biblioteca-digital-1.0.0.jar
-```
 
 ---
 
